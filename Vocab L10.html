@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vocabulary Learning Activity</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #eef6ff, #fff7e6);
+      color: #1f2937;
+    }
+
+    header {
+      background: #1e3a8a;
+      color: white;
+      padding: 22px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 15px;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 24px auto;
+      padding: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      margin-bottom: 18px;
+    }
+
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    select, input[type="text"] {
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #cbd5e1;
+      font-size: 16px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .success {
+      background: #16a34a;
+      color: white;
+    }
+
+    .warning {
+      background: #f97316;
+      color: white;
+    }
+
+    .danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .ghost {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .word-title {
+      font-size: 42px;
+      color: #1e3a8a;
+      margin: 0 0 8px;
+      text-transform: capitalize;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .info-box {
+      background: #f8fafc;
+      border-left: 6px solid #2563eb;
+      padding: 15px;
+      border-radius: 12px;
+      min-height: 105px;
+    }
+
+    .info-box h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #0f172a;
+    }
+
+    .question-box {
+      margin-top: 22px;
+      padding: 20px;
+      border-radius: 16px;
+      background: #fff7ed;
+      border: 2px solid #fed7aa;
+    }
+
+    .question-box h2 {
+      margin-top: 0;
+      color: #9a3412;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 15px 0;
+    }
+
+    .choice {
+      background: white;
+      border: 2px solid #cbd5e1;
+      color: #111827;
+      text-align: left;
+      font-weight: normal;
+    }
+
+    .choice:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .choice.selected {
+      border-color: #2563eb;
+      background: #dbeafe;
+      font-weight: bold;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: bold;
+      display: none;
+    }
+
+    .feedback.correct {
+      background: #dcfce7;
+      color: #166534;
+      display: block;
+    }
+
+    .feedback.wrong {
+      background: #fee2e2;
+      color: #991b1b;
+      display: block;
+    }
+
+    .progress-wrap {
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 20px;
+      margin: 10px 0;
+    }
+
+    .progress-fill {
+      background: #22c55e;
+      height: 100%;
+      width: 0%;
+      transition: 0.3s;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat-pill {
+      background: #f1f5f9;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      background: white;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #1e3a8a;
+      color: white;
+    }
+
+    .correct-text {
+      color: #15803d;
+      font-weight: bold;
+    }
+
+    .wrong-text {
+      color: #b91c1c;
+      font-weight: bold;
+    }
+
+    .small-note {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .start-screen h2 {
+      color: #1e3a8a;
+    }
+
+    .instruction-list li {
+      margin: 8px 0;
+      line-height: 1.5;
+    }
+
+    @media print {
+      button, select, input, .question-box, .start-screen, .top-bar {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Vocabulary Learning Activity</h1>
+    <p>Learn the word first. Then answer the question before moving to the next vocabulary word.</p>
+  </header>
+
+  <main class="container">
+    <section id="startScreen" class="card start-screen">
+      <h2>Student Login</h2>
+      <p>Select your name before starting the vocabulary activity.</p>
+
+      <select id="studentName">
+        <option value="">-- Select your name --</option>
+        <option>Chang, Christine</option>
+        <option>Chiang, Andy</option>
+        <option>Lan, Ellis</option>
+        <option>Liu, Lucas</option>
+        <option>Tsao, Bei-Beii</option>
+        <option>Yang, Lukas</option>
+        <option>Yao, Alvin</option>
+      </select>
+
+      <h3>Instructions</h3>
+      <ul class="instruction-list">
+        <li>Read the vocabulary word, simple definition, example sentence, part of speech, and synonyms.</li>
+        <li>Answer the question for each word.</li>
+        <li>If your answer is wrong, click Retry and try again.</li>
+        <li>You earn 1 point for each vocabulary word you complete correctly.</li>
+        <li>At the end, your answers, mistakes, and improvement tips will be shown.</li>
+      </ul>
+
+      <button class="primary" onclick="startActivity()">Start Activity</button>
+      <p class="small-note">Teacher note: This is one HTML file. You can upload it online and share the link with students.</p>
+    </section>
+
+    <section id="activityScreen" class="hidden">
+      <div class="card">
+        <div class="top-bar">
+          <div>
+            <strong>Student:</strong> <span id="studentDisplay"></span>
+          </div>
+          <div class="stats">
+            <span class="stat-pill">Word <span id="currentNumber">1</span> / <span id="totalNumber">15</span></span>
+            <span class="stat-pill">Score: <span id="scoreDisplay">0</span></span>
+            <span class="stat-pill">Attempts: <span id="attemptDisplay">0</span></span>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 id="wordTitle" class="word-title"></h2>
+        <span id="partOfSpeech" class="badge"></span>
+
+        <div class="info-grid">
+          <div class="info-box">
+            <h3>Simple Definition</h3>
+            <p id="definitionText"></p>
+          </div>
+          <div class="info-box">
+            <h3>Example Sentence</h3>
+            <p id="exampleText"></p>
+          </div>
+          <div class="info-box">
+            <h3>Synonyms</h3>
+            <p id="synonymsText"></p>
+          </div>
+        </div>
+
+        <div class="question-box">
+          <h2>Check Your Understanding</h2>
+          <p id="questionText"></p>
+          <div id="answerArea"></div>
+          <div id="feedback" class="feedback"></div>
+          <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button id="checkBtn" class="success" onclick="checkAnswer()">Check Answer</button>
+            <button id="retryBtn" class="warning hidden" onclick="retryQuestion()">Retry</button>
+            <button id="nextBtn" class="primary hidden" onclick="nextWord()">Next Vocabulary</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="card hidden">
+      <h2>Activity Complete</h2>
+      <p><strong>Student:</strong> <span id="resultStudent"></span></p>
+      <p><strong>Final Score:</strong> <span id="finalScore"></span></p>
+      <p><strong>Total Attempts:</strong> <span id="finalAttempts"></span></p>
+      <p id="improvementMessage"></p>
+
+      <h3>Answer Review</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Vocabulary Word</th>
+            <th>Your First Answer</th>
+            <th>Correct Answer</th>
+            <th>Result</th>
+            <th>Where to Improve</th>
+          </tr>
+        </thead>
+        <tbody id="reviewTable"></tbody>
+      </table>
+
+      <div style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="primary" onclick="window.print()">Print / Save Results</button>
+        <button class="ghost" onclick="restartActivity()">Restart Activity</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const vocabulary = [
+      {
+        word: "ponderous",
+        part: "adjective",
+        definition: "very heavy, slow, or difficult to move.",
+        example: "The workers moved the ponderous table across the room.",
+        synonyms: "heavy, bulky, massive",
+        type: "choice",
+        question: "Which sentence uses ponderous correctly?",
+        choices: [
+          "The ponderous backpack was hard to carry.",
+          "The ponderous bird flew quickly in the sky.",
+          "The ponderous joke made everyone laugh."
+        ],
+        answer: "The ponderous backpack was hard to carry.",
+        improve: "Remember that ponderous describes something very heavy, slow, or hard to move."
+      },
+      {
+        word: "aquatic",
+        part: "adjective",
+        definition: "related to water or living in water.",
+        example: "Fish and turtles are aquatic animals.",
+        synonyms: "water, marine, oceanic",
+        type: "choice",
+        question: "What does aquatic mean?",
+        choices: ["related to fire", "related to water", "related to mountains"],
+        answer: "related to water",
+        improve: "Connect aquatic with water, oceans, rivers, and animals that live in water."
+      },
+      {
+        word: "verge",
+        part: "noun",
+        definition: "the edge or point just before something happens.",
+        example: "The team was on the verge of winning the game.",
+        synonyms: "edge, border, brink",
+        type: "typing",
+        question: "Complete the sentence: The class was on the _____ of finishing the project.",
+        answer: "verge",
+        improve: "Verge means the edge or point just before something happens."
+      },
+      {
+        word: "blithe",
+        part: "adjective",
+        definition: "happy and carefree; not worried.",
+        example: "She had a blithe attitude during the picnic.",
+        synonyms: "cheerful, carefree, lighthearted",
+        type: "choice",
+        question: "Which word is closest in meaning to blithe?",
+        choices: ["carefree", "angry", "dangerous"],
+        answer: "carefree",
+        improve: "Blithe means cheerful and not worried."
+      },
+      {
+        word: "assert",
+        part: "verb",
+        definition: "to state something strongly and clearly.",
+        example: "The student asserted her opinion during the debate.",
+        synonyms: "state, declare, claim",
+        type: "typing",
+        question: "Type the vocabulary word that means to state something strongly and clearly.",
+        answer: "assert",
+        improve: "Assert is an action word. It means to say or state something confidently."
+      },
+      {
+        word: "plight",
+        part: "noun",
+        definition: "a difficult or dangerous situation.",
+        example: "The story showed the plight of people without clean water.",
+        synonyms: "trouble, problem, hardship",
+        type: "choice",
+        question: "A plight is usually a _____.",
+        choices: ["fun celebration", "difficult situation", "quick movement"],
+        answer: "difficult situation",
+        improve: "Plight usually describes a serious problem or hardship."
+      },
+      {
+        word: "mutilate",
+        part: "verb",
+        definition: "to badly damage or cut something.",
+        example: "Do not mutilate the book by tearing out its pages.",
+        synonyms: "damage, destroy, injure",
+        type: "choice",
+        question: "Which action shows mutilate?",
+        choices: [
+          "carefully fixing a poster",
+          "badly cutting and damaging a paper",
+          "reading a story quietly"
+        ],
+        answer: "badly cutting and damaging a paper",
+        improve: "Mutilate means to badly damage, cut, or destroy something."
+      },
+      {
+        word: "docile",
+        part: "adjective",
+        definition: "calm, gentle, and easy to teach or control.",
+        example: "The docile puppy followed the trainer's directions.",
+        synonyms: "gentle, obedient, calm",
+        type: "choice",
+        question: "Which animal would be called docile?",
+        choices: [
+          "a calm horse that follows directions",
+          "a wild dog that attacks everyone",
+          "a bird that flies away quickly"
+        ],
+        answer: "a calm horse that follows directions",
+        improve: "Docile describes someone or something calm, gentle, and easy to guide."
+      },
+      {
+        word: "monitor",
+        part: "verb / noun",
+        definition: "to watch or check carefully; a person or device that watches something.",
+        example: "The teacher monitored the students during the test.",
+        synonyms: "watch, check, observe",
+        type: "typing",
+        question: "Complete the sentence: The nurse will _____ the patient's temperature.",
+        answer: "monitor",
+        improve: "Monitor means to watch, check, or observe carefully."
+      },
+      {
+        word: "avert",
+        part: "verb",
+        definition: "to prevent something bad from happening; to turn away.",
+        example: "Wearing a helmet can help avert a serious injury.",
+        synonyms: "prevent, avoid, stop",
+        type: "choice",
+        question: "Which word is a synonym for avert?",
+        choices: ["prevent", "invite", "increase"],
+        answer: "prevent",
+        improve: "Avert often means to prevent or avoid something bad."
+      },
+      {
+        word: "nimble",
+        part: "adjective",
+        definition: "quick and light in movement.",
+        example: "The nimble gymnast jumped across the mat.",
+        synonyms: "quick, agile, light-footed",
+        type: "choice",
+        question: "A nimble person moves _____.",
+        choices: ["slowly and heavily", "quickly and easily", "sadly and quietly"],
+        answer: "quickly and easily",
+        improve: "Nimble describes quick, light, and easy movement."
+      },
+      {
+        word: "dwindles",
+        part: "verb",
+        definition: "becomes smaller or less over time.",
+        example: "The water supply dwindles during a long drought.",
+        synonyms: "decreases, shrinks, lessens",
+        type: "typing",
+        question: "Complete the sentence: If students keep eating the snacks, the supply _____.",
+        answer: "dwindles",
+        improve: "Dwindles means becomes smaller, fewer, or less."
+      },
+      {
+        word: "lethal",
+        part: "adjective",
+        definition: "able to cause death; very dangerous.",
+        example: "Some snakes have lethal venom.",
+        synonyms: "deadly, fatal, dangerous",
+        type: "choice",
+        question: "Which word is closest in meaning to lethal?",
+        choices: ["deadly", "friendly", "colorful"],
+        answer: "deadly",
+        improve: "Lethal means deadly or able to cause death."
+      },
+      {
+        word: "bleak",
+        part: "adjective",
+        definition: "cold, empty, sad, or without hope.",
+        example: "The abandoned house looked bleak on the rainy night.",
+        synonyms: "gloomy, hopeless, bare",
+        type: "choice",
+        question: "Which situation sounds bleak?",
+        choices: [
+          "a sunny birthday party",
+          "an empty, cold street with no lights",
+          "a colorful classroom celebration"
+        ],
+        answer: "an empty, cold street with no lights",
+        improve: "Bleak describes something gloomy, empty, cold, or without hope."
+      },
+      {
+        word: "vigilant",
+        part: "adjective",
+        definition: "watchful and careful, especially for danger or problems.",
+        example: "The lifeguard stayed vigilant while watching the swimmers.",
+        synonyms: "watchful, alert, careful",
+        type: "typing",
+        question: "Type the vocabulary word that means watchful and alert.",
+        answer: "vigilant",
+        improve: "Vigilant means staying alert and carefully watching for danger or problems."
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let totalAttempts = 0;
+    let selectedAnswer = "";
+    let firstAnswerThisWord = "";
+    let results = [];
+    let currentAnsweredCorrectly = false;
+
+    document.getElementById("totalNumber").textContent = vocabulary.length;
+
+    function startActivity() {
+      const name = document.getElementById("studentName").value;
+      if (!name) {
+        alert("Please select your name first.");
+        return;
+      }
+
+      document.getElementById("studentDisplay").textContent = name;
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("activityScreen").classList.remove("hidden");
+      loadWord();
+    }
+
+    function loadWord() {
+      const item = vocabulary[currentIndex];
+      selectedAnswer = "";
+      firstAnswerThisWord = "";
+      currentAnsweredCorrectly = false;
+
+      document.getElementById("currentNumber").textContent = currentIndex + 1;
+      document.getElementById("scoreDisplay").textContent = score;
+      document.getElementById("attemptDisplay").textContent = totalAttempts;
+      document.getElementById("progressFill").style.width = `${(currentIndex / vocabulary.length) * 100}%`;
+
+      document.getElementById("wordTitle").textContent = item.word;
+      document.getElementById("partOfSpeech").textContent = item.part;
+      document.getElementById("definitionText").textContent = item.definition;
+      document.getElementById("exampleText").textContent = item.example;
+      document.getElementById("synonymsText").textContent = item.synonyms;
+      document.getElementById("questionText").textContent = item.question;
+
+      document.getElementById("feedback").className = "feedback";
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("retryBtn").classList.add("hidden");
+      document.getElementById("nextBtn").classList.add("hidden");
+      document.getElementById("checkBtn").classList.remove("hidden");
+
+      const answerArea = document.getElementById("answerArea");
+      answerArea.innerHTML = "";
+
+      if (item.type === "choice") {
+        const choiceBox = document.createElement("div");
+        choiceBox.className = "choices";
+
+        item.choices.forEach(choice => {
+          const btn = document.createElement("button");
+          btn.className = "choice";
+          btn.textContent = choice;
+          btn.onclick = () => {
+            document.querySelectorAll(".choice").forEach(c => c.classList.remove("selected"));
+            btn.classList.add("selected");
+            selectedAnswer = choice;
+          };
+          choiceBox.appendChild(btn);
+        });
+
+        answerArea.appendChild(choiceBox);
+      } else if (item.type === "typing") {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = "typingAnswer";
+        input.placeholder = "Type your answer here";
+        input.oninput = () => selectedAnswer = input.value.trim();
+        answerArea.appendChild(input);
+      }
+    }
+
+    function normalize(text) {
+      return String(text).trim().toLowerCase();
+    }
+
+    function checkAnswer() {
+      const item = vocabulary[currentIndex];
+      const feedback = document.getElementById("feedback");
+
+      if (!selectedAnswer) {
+        alert("Please choose or type an answer first.");
+        return;
+      }
+
+      totalAttempts++;
+      document.getElementById("attemptDisplay").textContent = totalAttempts;
+
+      if (!firstAnswerThisWord) {
+        firstAnswerThisWord = selectedAnswer;
+      }
+
+      if (normalize(selectedAnswer) === normalize(item.answer)) {
+        feedback.className = "feedback correct";
+        feedback.textContent = "Correct! Great job. You may move to the next vocabulary word.";
+
+        if (!currentAnsweredCorrectly) {
+          score++;
+          currentAnsweredCorrectly = true;
+        }
+
+        document.getElementById("scoreDisplay").textContent = score;
+        document.getElementById("checkBtn").classList.add("hidden");
+        document.getElementById("retryBtn").classList.add("hidden");
+        document.getElementById("nextBtn").classList.remove("hidden");
+      } else {
+        feedback.className = "feedback wrong";
+        feedback.textContent = "Not yet. Review the vocabulary information and try again.";
+        document.getElementById("retryBtn").classList.remove("hidden");
+      }
+    }
+
+    function retryQuestion() {
+      selectedAnswer = "";
+      document.getElementById("feedback").className = "feedback";
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("retryBtn").classList.add("hidden");
+
+      const item = vocabulary[currentIndex];
+      if (item.type === "choice") {
+        document.querySelectorAll(".choice").forEach(c => c.classList.remove("selected"));
+      } else {
+        document.getElementById("typingAnswer").value = "";
+        document.getElementById("typingAnswer").focus();
+      }
+    }
+
+    function nextWord() {
+      const item = vocabulary[currentIndex];
+
+      results.push({
+        word: item.word,
+        firstAnswer: firstAnswerThisWord,
+        correctAnswer: item.answer,
+        result: normalize(firstAnswerThisWord) === normalize(item.answer) ? "Correct on first try" : "Needed retry",
+        improve: normalize(firstAnswerThisWord) === normalize(item.answer) ? "Good understanding. Keep practicing with example sentences." : item.improve
+      });
+
+      currentIndex++;
+
+      if (currentIndex < vocabulary.length) {
+        loadWord();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById("activityScreen").classList.add("hidden");
+      document.getElementById("resultScreen").classList.remove("hidden");
+      document.getElementById("progressFill").style.width = "100%";
+
+      const student = document.getElementById("studentName").value;
+      document.getElementById("resultStudent").textContent = student;
+      document.getElementById("finalScore").textContent = `${score} / ${vocabulary.length}`;
+      document.getElementById("finalAttempts").textContent = totalAttempts;
+
+      let message = "";
+      if (score === vocabulary.length && totalAttempts === vocabulary.length) {
+        message = "Excellent work! You answered every word correctly on the first try.";
+      } else if (score === vocabulary.length) {
+        message = "Good work! You completed all words. Review the words marked 'Needed retry' to improve accuracy.";
+      } else {
+        message = "Keep practicing. Review the definitions, example sentences, and synonyms for the words you missed.";
+      }
+      document.getElementById("improvementMessage").textContent = message;
+
+      const table = document.getElementById("reviewTable");
+      table.innerHTML = "";
+
+      results.forEach((r, index) => {
+        const row = document.createElement("tr");
+        const isFirstTryCorrect = r.result === "Correct on first try";
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${r.word}</strong></td>
+          <td>${r.firstAnswer}</td>
+          <td>${r.correctAnswer}</td>
+          <td class="${isFirstTryCorrect ? 'correct-text' : 'wrong-text'}">${r.result}</td>
+          <td>${r.improve}</td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    function restartActivity() {
+      currentIndex = 0;
+      score = 0;
+      totalAttempts = 0;
+      selectedAnswer = "";
+      firstAnswerThisWord = "";
+      results = [];
+      currentAnsweredCorrectly = false;
+
+      document.getElementById("resultScreen").classList.add("hidden");
+      document.getElementById("startScreen").classList.remove("hidden");
+      document.getElementById("studentName").value = "";
+    }
+  </script>
+</body>
+</html>
